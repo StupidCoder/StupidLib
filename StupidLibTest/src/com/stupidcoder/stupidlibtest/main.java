@@ -79,8 +79,8 @@ public class main extends Activity implements Scene.RenderEvent {
 		phong.setShaderParameter("u_lightColor", 2, new float[] { 1.0f, 0.7f, 0.7f, 0.7f, 1.0f, 0.7f });
 
 		Shader solid = mScene.createShader("solid");
-		solid.setVertexSource(getResources(), R.raw.base_vertex);
-		solid.setFragmentSource(getResources(), R.raw.solid_fragment);
+		solid.setVertexSource(getResources(), R.raw.solid_vsh);
+		solid.setFragmentSource(getResources(), R.raw.solid_fsh);
 		solid.setShaderParameter("u_color", new float[] { 1.0f, 0.0f, 0.0f, 1.0f });
 
 		// ---------------------------------------------------------------------------------
