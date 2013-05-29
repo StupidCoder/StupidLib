@@ -19,14 +19,15 @@ varying mediump vec3 v_lightVec[NUM_LIGHTS];
 void main()
 {
 	v_normal = vec3(u_model * vec4(a_normal, 0.0));
-
 	v_texCoord = a_texCoord;
+	
+	highp vec4 transformedPosition = u_model * a_position;
 
-	v_cameraVec = u_cameraPos - a_position.xyz;
+	v_cameraVec = u_cameraPos - transformedPosition.xyz;
 
 	for (int i = 0 ; i < NUM_LIGHTS ; i++)
-		v_lightVec[i] = u_lightPos[i] - a_position.xyz;
+		v_lightVec[i] = u_lightPos[i] - transformedPosition.xyz;
 
-	gl_Position = u_projection * u_view * u_model * a_position;
+	gl_Position = u_projection * u_view * transformedPosition;
 }
 
