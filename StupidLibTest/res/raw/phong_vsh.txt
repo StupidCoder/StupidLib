@@ -7,7 +7,7 @@ uniform mediump mat4 u_model;
 uniform vec3 u_cameraPos;
 uniform vec3 u_lightPos[NUM_LIGHTS];
 
-attribute highp vec4 a_position;
+attribute highp vec3 a_position;
 attribute mediump vec2 a_texCoord;
 attribute mediump vec3 a_normal;
 
@@ -21,10 +21,9 @@ void main()
 	v_normal = vec3(u_model * vec4(a_normal, 0.0));
 	v_texCoord = a_texCoord;
 	
-	highp vec4 transformedPosition = u_model * a_position;
+	highp vec4 transformedPosition = u_model * vec4(a_position, 1.0);
 
 	v_cameraVec = u_cameraPos - transformedPosition.xyz;
-
 	for (int i = 0 ; i < NUM_LIGHTS ; i++)
 		v_lightVec[i] = u_lightPos[i] - transformedPosition.xyz;
 
