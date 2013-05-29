@@ -1,0 +1,40 @@
+const int NUM_LIGHTS = 2;
+
+const mediump vec3 AMBIENT = vec3(0.1, 0.1, 0.1);
+const mediump float MAX_DIST = 5.0;
+const mediump float MAX_DIST_SQUARED = MAX_DIST * MAX_DIST;
+	
+uniform mediump vec3 u_lightColor[NUM_LIGHTS];
+uniform sampler2D s_texture;
+
+varying mediump vec3 v_normal;
+varying mediump vec2 v_texCoord;
+varying mediump vec3 v_cameraVec;
+varying mediump vec3 v_lightVec[NUM_LIGHTS];
+
+void main()
+{
+	mediump vec3 diffuse = vec3(0.0, 0.0, 0.0);
+	mediump vec3 specular = vec3(0.0, 0.0, 0.0);
+
+	mediump vec3 normal = normalize(v_normal);
+	mediump vec3 cameraDir = normalize(v_cameraVec);
+
+	for (int i = 0 ; i < NUM_LIGHTS ; i++) {
+		mediump float dist = min(dot(v_lightVec[i], v_lightVec[i]), MAX_DIST_SQUARED) / MAX_DIST_SQUARED;
+		mediump float distFactor = 1.0 - dist;
+		
+		mediump vec3 lightDir = normalize(v_lightVec[i]);
+		mediump float diffuseDot = dot(normal, lightDir);
+		diffuse += u_lightColor[i] * clamp(diffuseDot, 0.0, 1.0) * distFactor;
+	
+		mediump vec3 halfAngle = normalize(cameraDir + lightDir);
+		mediump float specularDot = dot(normal, halfAngle);
+		mediump vec3 specularColor = u_lightColor[i] + 0.5;
+		specular += specularColor * pow(clamp(specularDot, 0.0, 1.0), 16.0) * distFactor;
+	}
+
+	mediump vec4 sample = texture2D(s_texture, v_texCoord);
+	gl_FragColor = vec4(clamp(sample.rgb * (diffuse + AMBIENT) + specular, 0.0, 1.0), sample.a);
+}
+
