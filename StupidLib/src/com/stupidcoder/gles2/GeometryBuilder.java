@@ -149,6 +149,39 @@ public class GeometryBuilder {
 			vertex.v = relPos.dot(v);
 		}
 	}
+	
+	public void sphericalTexture(Vec3 pCenter) {
+		for (int i = 0 ; i < mVertices.size() ; i++)
+		{
+			Vertex vertex = mVertices.get(i);
+			Vec3 relPos = vertex.pos.sub(pCenter);
+
+			float horizontalDistance = (float) Math.sqrt(relPos.x * relPos.x + relPos.z * relPos.z);
+			double yaw = Math.atan2(relPos.x / horizontalDistance, relPos.z / horizontalDistance) - Math.PI;
+			double pitch = -Math.atan2(relPos.y, horizontalDistance);
+
+			vertex.u = (float)(yaw / Math.PI);
+			vertex.v = (float)(pitch / Math.PI);
+		}		
+	}
+	
+	public void scaleTexture(float pFactorU, float pFactorV) {
+		for (int i = 0 ; i < mVertices.size() ; i++)
+		{
+			Vertex vertex = mVertices.get(i);
+			vertex.u *= pFactorU;
+			vertex.v *= pFactorV;
+		}		
+	}
+	
+	public void translateTexture(float pDeltaU, float pDeltaV) {
+		for (int i = 0 ; i < mVertices.size() ; i++)
+		{
+			Vertex vertex = mVertices.get(i);
+			vertex.u += pDeltaU;
+			vertex.v += pDeltaV;
+		}		
+	}
 
 	// ------------------------------------------------------------
 	// Normal vectors
