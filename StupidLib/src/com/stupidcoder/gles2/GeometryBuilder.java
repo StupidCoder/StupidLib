@@ -255,7 +255,7 @@ public class GeometryBuilder {
 	}
 
 	// ------------------------------------------------------------
-	// Basic primitives
+	// 2D shapes
 
 	public void triangle(float pX1, float pY1, float pZ1, float pX2, float pY2, float pZ2, float pX3, float pY3, float pZ3) {
 		int firstIndex = mVertices.size();
@@ -301,8 +301,33 @@ public class GeometryBuilder {
 		indices.add(firstIndex + 0); indices.add(firstIndex + 2); indices.add(firstIndex + 3);
 	}
 
+	public void circle(Vec3 pCenter, Vec3 pNormal, float pRadius, int pSegments) {
+		Vec3 normal = new Vec3(pNormal).normalize();
+		Vec3 tangent = normal.cross((Math.abs(pNormal.y) > 0.5) ? new Vec3(0.0f, 0.0f, 1.0f) : new Vec3(0.0f, 1.0f, 0.0f));
+		Vec3 biTangent = normal.cross(tangent);
+
+		int firstIndex = mVertices.size();
+		mVertices.add(new Vertex(pCenter.x, pCenter.y, pCenter.z, pNormal.x, pNormal.y, pNormal.z, 0.5f, 0.5f));
+		for (int i = 0 ; i < pSegments ; i++) {
+			float angle = (float)((Math.PI * 2.0) / (double)pSegments * (double)i);
+			float sin = (float)Math.sin(angle);
+			float cos = (float)Math.cos(angle);
+			mVertices.add(new Vertex(
+				pCenter.x + sin * pRadius * tangent.x + cos * pRadius * biTangent.x,
+				pCenter.y + sin * pRadius * tangent.y + cos * pRadius * biTangent.y,
+				pCenter.z + sin * pRadius * tangent.z + cos * pRadius * biTangent.z,
+				pNormal.x, pNormal.y, pNormal.z,
+				0.5f + sin / 2.0f, 0.5f + cos / 2.0f));
+		}
+
+		ArrayList<Integer> indices = mIndices.get(mCurrentPassID);
+		for (int i = 1 ; i <= pSegments ; i++) {
+			indices.add(firstIndex); indices.add((i == 1) ? (firstIndex + pSegments) : (firstIndex + i - 1)); indices.add(firstIndex + i);
+		}
+	}
+	
 	// ------------------------------------------------------------
-	// Basic shapes
+	// 3D shapes
 
 	public void cube(float pCenterX, float pCenterY, float pCenterZ, float pSizeX, float pSizeY, float pSizeZ) {
 		float hiX = pCenterX + pSizeX;
@@ -318,6 +343,18 @@ public class GeometryBuilder {
 		quad(loX, loY, hiZ, loX, hiY, hiZ, hiX, hiY, hiZ, hiX, loY, hiZ);
 		quad(loX, loY, loZ, loX, hiY, loZ, loX, hiY, hiZ, loX, loY, hiZ);
 		quad(hiX, loY, loZ, hiX, loY, hiZ, hiX, hiY, hiZ, hiX, hiY, loZ);
+	}
+	
+	public void cylinder(Vec3 pPointA, float pRadiusA, Vec3 pPointB, float pRadiusB, int pSegments) {
+		Vec3 normal = pPointB.sub(pPointA).normalize();
+		
+		int firstIndexA = mVertices.size();
+		this.circle(pPointA, normal.mul(-1.0f), pRadiusA,pSegments);
+
+		int firstIndexB = mVertices.size();
+		this.circle(pPointB, normal, pRadiusB,pSegments);
+		
+		// TODO: Build circumference
 	}
 
 	public void sphere(Vec3 pCenter, float pRadius, int pTesselation) {
@@ -362,10 +399,10 @@ public class GeometryBuilder {
 		int firstIndex = mVertices.size();
 		for (int i = 0; i < vertices.size(); i++) {
 			Vec3 position = vertices.get(i);
-			// TODO: Set proper texture coordinates!
 			mVertices.add(new Vertex(pCenter.add(position.mul(pRadius)), position, 0.0f, 0.0f));
 		}
-
+		this.sphericalTexture(pCenter);
+		
 		ArrayList<Integer> indices = mIndices.get(mCurrentPassID);
 		for (int i = 0; i < tempIndices.size(); i++)
 			indices.add(firstIndex + tempIndices.get(i));

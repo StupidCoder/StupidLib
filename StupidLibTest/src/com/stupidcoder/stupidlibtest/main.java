@@ -118,8 +118,9 @@ public class main extends Activity implements Scene.RenderEvent {
 
 		// Use the GeometryBuilder class to create a tesselated sphere and apply spherical texturing to it
 		builder = new GeometryBuilder();
-		builder.sphere(new Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4);
-		builder.sphericalTexture(new Vec3(0.0f, 0.0f, 0.0f));
+		//builder.sphere(new Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4);
+		builder.circle(new Vec3(0.0f, 0.0f, 0.0f), new Vec3(0.0f, -1.0f, 0.0f), 2.0f, 32);
+		//builder.cylinder(new Vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Vec3(2.0f, 0.0f, 0.0f), 0.5f, 32);
 
 		// Create a geometry object with vertex position, UV coordinates and normal vectors and dump the data from the GeometryBuilder into its buffers
 		geo = new Geometry();
