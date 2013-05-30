@@ -118,8 +118,8 @@ public class main extends Activity implements Scene.RenderEvent {
 
 		// Use the GeometryBuilder class to create a tesselated sphere and apply spherical texturing to it
 		builder = new GeometryBuilder();
-		//builder.sphere(new Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4);
-		builder.circle(new Vec3(0.0f, 0.0f, 0.0f), new Vec3(0.0f, -1.0f, 0.0f), 2.0f, 32);
+		builder.sphere(new Vec3(0.0f, 0.0f, 0.0f), 2.0f, 4);
+		//builder.circle(new Vec3(0.0f, 0.0f, 0.0f), new Vec3(0.0f, -1.0f, 0.0f), 2.0f, 32);
 		//builder.cylinder(new Vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Vec3(2.0f, 0.0f, 0.0f), 0.5f, 32);
 
 		// Create a geometry object with vertex position, UV coordinates and normal vectors and dump the data from the GeometryBuilder into its buffers
@@ -132,7 +132,7 @@ public class main extends Activity implements Scene.RenderEvent {
 
 		// Add two rendering passes to the geometry: First using the Phong shader and then the solid color shader
 		// The first rendering pass gets a polygon offset of 1.0 and the second pass gets set to wireframe mode
-		geo.addPass(phong).setOffset(1.0f).setTexture("s_texture", new Texture(getResources(), R.raw.uvgrid));
+		geo.addPass(phong).setTexture("s_texture", new Texture(getResources(), R.raw.uvgrid));
 		//geo.addPass(solid).setWireframe(true);
 
 		// Create a scene node called "object" that contains the created geometry and attach it to the root node of the scene
